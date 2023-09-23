@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "start:dev": "npx nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc"
   },
   "author": "",
   "license": "ISC",
@@ -14,8 +15,10 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "math-expression-generator": "^1.3.0",
     "mathjs": "^11.11.1",
     "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "ts-node": "^10.9.1"
   }
 }

@@ -6,6 +6,7 @@ export namespace Eval {
     };
 
     export type Res = {
+        expression: string;
         res: any;
     }
 }
