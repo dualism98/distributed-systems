@@ -1,13 +1,20 @@
 import { io } from "socket.io-client";
-import { generateMathExpression, getRandomLogin } from "./utils";
+import dgram from 'dgram';
+
+import { generateMathExpression, getBroadcastAddress, getCurrentAddress, getRandomLogin } from "./utils";
 import SocketEvents from "../common/SocketEvents";
 import { Eval } from "../common/types";
 import { sleep } from "../common/utils";
+import { PORT } from "./constants";
 
-const socket = io('ws://localhost:3000');
+let socketServerAddress: string | null = null; 
+let socket = io({
+    autoConnect: false
+})
+
+const udp = dgram.createSocket('udp4');
 
 const startSendingOfExpressions = async () => {
-    console.log('Begin of sending expressions')
     while (true) {
         const login = getRandomLogin();
         const expression = generateMathExpression();
@@ -16,10 +23,26 @@ const startSendingOfExpressions = async () => {
     }
 }
 
+udp.on('message', (msg, rinfo) => {
+    if (msg.toString() !== SocketEvents.SERVER_HANDSHAKE || socketServerAddress) {
+        return;
+    }
 
-socket.on(SocketEvents.EVAL_RES, (data: Eval.Res) => {
-    const {res} = data;
-    console.info(`Got result = ${res}`)
+    socketServerAddress = `${rinfo.address}:${rinfo.port}`
+    socket = io(`ws://${socketServerAddress}`)
+    socket.on(SocketEvents.EVAL_RES, (data: Eval.Res) => {
+        const {res} = data;
+        console.info(`Got result = ${res}`)
+    })
+    startSendingOfExpressions()
 })
 
-startSendingOfExpressions();
+udp.bind(async () => {
+    udp.setBroadcast(true);
+    console.info(`Client UDP started`)
+    const currentAddress = getBroadcastAddress();
+    while (!socketServerAddress) {
+        udp.send(SocketEvents.CLIENT_HANDSHAKE, PORT, currentAddress)
+        await sleep(3000);
+    }
+});
