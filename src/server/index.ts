@@ -6,7 +6,9 @@ import { authorizeEvalData, evaluateExpression } from "./utils";
 import SocketEvents from "../common/SocketEvents";
 import { Eval } from "../common/types";
 
-const udp = dgram.createSocket('udp4')
+const udp = dgram.createSocket('udp4');
+
+let isActive = true;
 const server = new Server(PORT);
 
 const handleEvalData = (socket: Socket, data: Eval.Data) => {
@@ -19,9 +21,19 @@ const handleEvalData = (socket: Socket, data: Eval.Data) => {
 
 server.on('connection', socket => {
     console.info(`Connection with ${socket.id}`)
+
     socket.on(SocketEvents.EVAL, (data: Eval.Data) => {
+        if (!isActive) {
+            return;
+        }
+
         console.info(`Got expression from ${socket.id}`)
         handleEvalData(socket, data);
+    })
+    
+    socket.on(SocketEvents.STOP, () => {
+        console.info('SERVER STOPPED')
+        isActive = false;
     })
 })
 

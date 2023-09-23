@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import dgram from 'dgram';
 
-import { generateMathExpression, getBroadcastAddress, getCurrentAddress, getRandomLogin } from "./utils";
+import { generateMathExpression, getBroadcastAddress, getRandomInt, getRandomLogin } from "./utils";
 import SocketEvents from "../common/SocketEvents";
 import { Eval } from "../common/types";
 import { sleep } from "../common/utils";
@@ -14,11 +14,19 @@ let socket = io({
 
 const udp = dgram.createSocket('udp4');
 
-const startSendingOfExpressions = async () => {
+const startSignalsSending = async () => {
     while (true) {
-        const login = getRandomLogin();
-        const expression = generateMathExpression();
-        socket.emit(SocketEvents.EVAL, {login, expression})
+        const randomNum = getRandomInt(10);
+        switch (true) {
+            case randomNum > 0:
+                const login = getRandomLogin();
+                const expression = generateMathExpression();
+                socket.emit(SocketEvents.EVAL, {login, expression});
+                break;
+            default:
+                socket.emit(SocketEvents.STOP);
+        }
+
         await sleep(3000);
     }
 }
@@ -34,7 +42,7 @@ udp.on('message', (msg, rinfo) => {
         const {res} = data;
         console.info(`Got result = ${res}`)
     })
-    startSendingOfExpressions()
+    startSignalsSending();
 })
 
 udp.bind(async () => {
