@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import dgram from 'dgram';
 
-import { generateMathExpression, getBroadcastAddress, getRandomInt, getRandomLogin } from "./utils";
+import { generateMathExpression, getBroadcastAddress, getCurrentAddress, getRandomInt, getRandomLogin } from "./utils";
 import SocketEvents from "../common/SocketEvents";
 import { Eval } from "../common/types";
 import { sleep } from "../common/utils";
@@ -40,7 +40,7 @@ udp.on('message', (msg, rinfo) => {
     socket = io(`ws://${socketServerAddress}`)
     socket.on(SocketEvents.EVAL_RES, (data: Eval.Res) => {
         const {res} = data;
-        console.info(`Got result = ${res}`)
+        console.info(`[${getCurrentAddress()}]: Got result = ${res}`)
     })
     startSignalsSending();
 })

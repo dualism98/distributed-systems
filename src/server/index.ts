@@ -5,17 +5,19 @@ import { PORT } from "./constants";
 import { authorizeEvalData, evaluateExpression } from "./utils";
 import SocketEvents from "../common/SocketEvents";
 import { Eval } from "../common/types";
+import { sleep } from "../common/utils";
 
 const udp = dgram.createSocket('udp4');
 
 let isActive = true;
 const server = new Server(PORT);
 
-const handleEvalData = (socket: Socket, data: Eval.Data) => {
+const handleEvalData = async (socket: Socket, data: Eval.Data) => {
     const {login, expression} = data;
 
     authorizeEvalData(login);
     const res = evaluateExpression(expression);
+    await sleep(1000);
     socket.emit(SocketEvents.EVAL_RES, {res, expression});
 }
 
@@ -27,13 +29,15 @@ server.on('connection', socket => {
             return;
         }
 
-        console.info(`Got expression from ${socket.id}`)
+        console.info(`Got expression from ${socket.id}. ${data.expression}`)
         handleEvalData(socket, data);
     })
     
     socket.on(SocketEvents.STOP, () => {
-        console.info('SERVER STOPPED')
-        isActive = false;
+        if (isActive) {
+            console.info('SERVER STOPPED')
+            isActive = false;
+        }
     })
 })
 
