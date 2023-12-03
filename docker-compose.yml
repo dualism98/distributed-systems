@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    command: node build/server/index.js
+    command: node build/monitor/index.js
 
   client:
     build:
@@ -15,6 +15,6 @@ services:
       target: production
     deploy:
       replicas: 3
-    command: node build/client/index.js
+    command: node build/node/index.js
     depends_on:
       - server

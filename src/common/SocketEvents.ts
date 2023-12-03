@@ -1,10 +1,6 @@
 enum SocketEvents {
-    EVAL = 'eval',
-    EVAL_RES = 'evalRes',
-    STOP = 'stop',
-
-    SERVER_HANDSHAKE = 'serverHandshake',
-    CLIENT_HANDSHAKE = 'clientHandshake',
+    MONITOR_HANDSHAKE = 'MONITOR_HANDSHAKE',
+    NODE_MONITOR_HANDSHAKE = 'NODE_MONITOR_HANDSHAKE',
 }
 
 export default SocketEvents;
