@@ -25,9 +25,6 @@ class UdpBroadcaster {
                     this.socket.send(JSON.stringify({name: SocketEvents.NODE_MONITOR_HANDSHAKE, data: {address, name}}), rinfo.port, rinfo.address);
                     break;
                 case SocketEvents.NODE_BROADCAST:
-                    if (this.node.address === rinfo.address) {
-                        break;
-                    }
                     console.info(`Got node broadcast from ${rinfo.address}`);
                     var {address, name} = this.node;
                     this.socket.send(JSON.stringify({name: SocketEvents.NODE_BROADCAST_RESPONSE, data: {address, name}}), rinfo.port, rinfo.address);
