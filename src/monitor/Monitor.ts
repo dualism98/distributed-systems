@@ -30,7 +30,8 @@ class Monitor {
             const currentAddress = getBroadcastAddress();
             console.info(`Monitor utility UDP broadcast started: ${currentAddress}:${UDP_PORT}`);
             while (true) {
-                this.socket.send(SocketEvents.MONITOR_HANDSHAKE, UDP_PORT, currentAddress)
+                const message = JSON.stringify({name: SocketEvents.MONITOR_HANDSHAKE, data: null});
+                this.socket.send(message, UDP_PORT, currentAddress)
                 await sleep(3000);
             }
         });

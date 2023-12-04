@@ -1,14 +1,16 @@
 version: "3.8"
 
 services:
-  server:
+  monitoring:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
     command: node build/monitor/index.js
+    ports:
+      - 3000:3000
 
-  client:
+  node:
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,5 +18,3 @@ services:
     deploy:
       replicas: 3
     command: node build/node/index.js
-    depends_on:
-      - server

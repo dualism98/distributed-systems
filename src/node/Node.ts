@@ -1,5 +1,5 @@
 import { getCurrentAddress } from "../common/utils";
-import makeNodeName from "../utils/makeNodeName";
+import {makeNodeName} from "../common/utils";
 
 
 class Node {
