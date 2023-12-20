@@ -21,6 +21,18 @@ class TcpServer {
                 this.node.handleNodeTable(nodeTable);
                 this.server.emit(SocketEvents.NODE_TABLE_SHARE_RESPONSE, this.node.nodeTable)
             })
+
+            socket.on(SocketEvents.MESSAGE_SHARE, data => {
+                console.info(`Got message ${data.message} from ${socket.handshake.address}`)
+                let availableNodes = this.node.nodeTable.filter(node => !data.visitedNodes.includes(node.address))
+                if (availableNodes.length === 0) {
+                    console.log('No available nodes for share message', this.node.address);
+                } else {
+                    const randomNodeIndex = Math.floor(Math.random() * availableNodes.length)
+                    const targetNode = availableNodes[randomNodeIndex]
+                    this.node.tcpClient.shareMessage(targetNode.address, [...data.visitedNodes, this.node.address]);
+                }
+            });
         })
     }
 }

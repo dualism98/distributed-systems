@@ -28,13 +28,21 @@ class Node {
     start() {
         this.udpBroadcaster.initUdpConnection();
         this.tcpServer.start();
+        // setInterval(() => {
+        //     if (this.nodeTable.length) {
+        //         const randomNodeIndex = Math.floor(Math.random() * this.nodeTable.length)
+        //         const targetNode = this.nodeTable[randomNodeIndex]
+        //         this.tcpClient.shareNodeTable(targetNode.address);
+        //     }
+        // }, 5000);
+
         setInterval(() => {
             if (this.nodeTable.length) {
                 const randomNodeIndex = Math.floor(Math.random() * this.nodeTable.length)
                 const targetNode = this.nodeTable[randomNodeIndex]
-                this.tcpClient.shareNodeTable(targetNode.address);
+                this.tcpClient.shareMessage(targetNode.address);
             }
-        }, 5000);
+        }, Math.random() * 10000 + 10000);
     }
 
     handleNodeTable(nodeTable: INode[]) {

@@ -7,6 +7,8 @@ enum SocketEvents {
 
     NODE_TABLE_SHARE = 'NODE_TABLE_SHARE',
     NODE_TABLE_SHARE_RESPONSE = 'NODE_TABLE_SHARE_RESPONSE',
+
+    MESSAGE_SHARE = 'MESSAGE_SHARE',
 }
 
 export default SocketEvents;

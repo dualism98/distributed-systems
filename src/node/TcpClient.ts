@@ -30,6 +30,24 @@ class TcpClient {
             this.node.removeNodeRecord(address);
         })
     }
+
+    async shareMessage(address: string, visitedNodes?: string[]) {
+        this.socket = io(`ws://${address}:${TCP_PORT}`)
+        
+        this.socket.on('connect', () => {
+            const message = Math.random();
+            this.socket.emit(SocketEvents.MESSAGE_SHARE, {
+                message,
+                visitedNodes: !visitedNodes ? [this.node.address] : visitedNodes,
+            })
+            console.log(`Send message ${message} from ${this.node.address}`)
+        })
+
+        this.socket.on('connect_error', e => {
+            console.info(`Error of connection to ${this.node.address}. ERROR: ${e.message}`)
+            this.node.removeNodeRecord(address);
+        })
+    }
 }
 
 export default TcpClient;
